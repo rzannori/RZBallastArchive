@@ -17,6 +17,7 @@ Progetto hobbistico, condiviso così com'è: **nessuna garanzia di supporto o ma
 | `icons/` | Icone dell'app |
 | `tools/csp.py` | Aggiorna/controlla gli hash della Content-Security-Policy |
 | `tests/` | Test automatici (Playwright) e file di esempio di un backup |
+| `CHANGELOG.md` | Storia delle modifiche, versione per versione |
 
 Tutti i percorsi sono relativi (`./`): l'app funziona anche in una sottocartella, come su GitHub Pages: **https://rzannori.github.io/RZBallastArchive/**
 
