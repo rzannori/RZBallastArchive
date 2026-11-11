@@ -1,0 +1,12 @@
+{
+  "name": "rz-ballast-archive",
+  "private": true,
+  "description": "PWA per scegliere il ballast di alianti RC in funzione del vento. Solo i test usano Node.",
+  "scripts": {
+    "csp": "python3 tools/csp.py",
+    "test": "python3 tools/csp.py --check && playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

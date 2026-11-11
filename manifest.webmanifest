@@ -1,0 +1,15 @@
+{
+  "name": "RZ Ballast Archive",
+  "short_name": "RZ Ballast",
+  "description": "Ballast e baricentro in funzione del vento",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c1e30",
+  "theme_color": "#0c1e30",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
