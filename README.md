@@ -28,6 +28,7 @@ Dalla v23 i modelli si sincronizzano con la cartella **«RZ Dati»** di un Googl
 - Accesso OAuth 2.0 «implicit» senza librerie (la CSP non ammette script esterni): `gdConnect()` porta a Google, il token torna in `#access_token` e vale circa un'ora. ID client del progetto Google Cloud «RZ Dati» in `GD.cid` (non è un segreto); ambito `drive`; origine autorizzata `https://rzannori.github.io`, redirect `https://rzannori.github.io/RZBallastArchive/`.
 - `gdSync()`: scarica `modelli.json`, unisce per `updatedAt`, applica le eliminazioni (`deleted`), carica le immagini cambiate in `immagini/`, riscrive `modelli.json` solo se cambia. Stato in `localStorage` (`rzDrive`), eliminazioni locali in `DB.deleted`.
 - La pagina servita da `localhost` non può collegarsi al vero Drive (redirect non autorizzato): i test usano un Drive finto.
+- Il progetto Google Cloud è in modalità **Test**: possono collegarsi solo gli account elencati in Google Auth Platform → Pubblico → **Utenti di test**. Con un altro account Google risponde «Accesso bloccato: … non ha completato la procedura di verifica di Google».
 
 ## Sicurezza
 
