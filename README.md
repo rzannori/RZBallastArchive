@@ -21,9 +21,17 @@ Progetto hobbistico, condiviso così com'è: **nessuna garanzia di supporto o ma
 
 Tutti i percorsi sono relativi (`./`): l'app funziona anche in una sottocartella, come su GitHub Pages: **https://rzannori.github.io/RZBallastArchive/**
 
+## Google Drive (cartella «RZ Dati»)
+
+Dalla v23 i modelli si sincronizzano con la cartella **«RZ Dati»** di un Google Drive dedicato, condivisa con RZ Hub e le altre app RZ (formato: `rz-hub/docs/rz-dati-formato.md` e `rz-dati-identificativi.md`).
+
+- Accesso OAuth 2.0 «implicit» senza librerie (la CSP non ammette script esterni): `gdConnect()` porta a Google, il token torna in `#access_token` e vale circa un'ora. ID client del progetto Google Cloud «RZ Dati» in `GD.cid` (non è un segreto); ambito `drive`; origine autorizzata `https://rzannori.github.io`, redirect `https://rzannori.github.io/RZBallastArchive/`.
+- `gdSync()`: scarica `modelli.json`, unisce per `updatedAt`, applica le eliminazioni (`deleted`), carica le immagini cambiate in `immagini/`, riscrive `modelli.json` solo se cambia. Stato in `localStorage` (`rzDrive`), eliminazioni locali in `DB.deleted`.
+- La pagina servita da `localhost` non può collegarsi al vero Drive (redirect non autorizzato): i test usano un Drive finto.
+
 ## Sicurezza
 
-- **Content-Security-Policy** in un `<meta>` di `index.html` (GitHub Pages non permette intestazioni HTTP): script solo con hash, nessun `eval`, nessuna risorsa esterna, `object-src 'none'`, `base-uri 'none'`. Gli stili inline sono ammessi (`'unsafe-inline'` solo per `style-src`).
+- **Content-Security-Policy** in un `<meta>` di `index.html` (GitHub Pages non permette intestazioni HTTP): script solo con hash, nessun `eval`, nessuna risorsa esterna (unica eccezione: le chiamate a `https://www.googleapis.com` per Google Drive), `object-src 'none'`, `base-uri 'none'`. Gli stili inline sono ammessi (`'unsafe-inline'` solo per `style-src`).
 - I testi scritti dall'utente (nomi di modelli e pesi) passano da `esc()` prima di finire in `innerHTML`; i file importati (backup, Excel) vengono ripuliti da `cleanModel()`.
 - `noindex, nofollow`: il sito non viene indicizzato dai motori di ricerca.
 

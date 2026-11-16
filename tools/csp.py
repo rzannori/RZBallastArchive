@@ -24,7 +24,7 @@ POLICY = (
     "style-src 'self' 'unsafe-inline'; "  # stili inline usati dall'interfaccia (non eseguono codice)
     "img-src 'self' data: blob:; "         # immagini incorporate (data:) e foto caricate
     "font-src 'self'; "
-    "connect-src 'self'; "
+    "connect-src 'self' https://www.googleapis.com; "   # Google Drive (cartella RZ Dati)
     "manifest-src 'self'; "
     "worker-src 'self'; "
     "object-src 'none'; "

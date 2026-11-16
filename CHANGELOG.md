@@ -2,6 +2,15 @@
 
 Le versioni corrispondono a `VERSION` in `sw.js`. La cronologia dettagliata dello sviluppo precedente a questo repository è conservata altrove; qui è riassunta.
 
+## v23 — 2026-11-16 · Google Drive (cartella «RZ Dati»)
+- Nuovo riquadro **Google Drive** in Archivio → Dati: «Collega Google Drive», «Sincronizza ora», «Scollega». I modelli si allineano con la cartella **«RZ Dati»** del Drive dedicato al modellismo, condivisa con RZ Hub e le altre app RZ (formato descritto in `rz-hub/docs/rz-dati-formato.md`).
+- `RZ Dati/modelli.json` (schema 2) senza immagini; le foto in `RZ Dati/immagini/<id>.jpg`. Vince la versione più recente di ogni modello (`updatedAt`); un modello eliminato lascia una traccia (`deleted`) e sparisce anche dagli altri dispositivi.
+- Sincronizzazione automatica all'apertura e qualche secondo dopo ogni modifica; con il Drive collegato l'app non chiede più di salvare un backup su file (lo fa la sincronizzazione). Senza internet funziona come prima.
+- Accesso a Google senza librerie esterne (redirect OAuth, token di circa un'ora); la CSP ammette solo `https://www.googleapis.com` in `connect-src` (`tools/csp.py` aggiornato).
+- Modelli: nuovo campo facoltativo `alias` (nomi del modello nella radio, per collegare i log di volo).
+- Service worker: le richieste verso altri siti (Google Drive) non passano più dalla cache.
+- Test: Drive finto (unione, immagini, eliminazioni, ritorno da Google con il token).
+
 ## v22 — 2026-11-11 · Trasloco su GitHub Pages
 - L'app si trova ora su **https://rzannori.github.io/RZBallastArchive/** (repository pubblico con solo l'app).
 - **Content-Security-Policy** con hash degli script inline e strumento `tools/csp.py` per aggiornarla e controllarla.

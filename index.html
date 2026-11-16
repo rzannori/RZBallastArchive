@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-T9ZOdKPYBQMC/Kva5w9nH4q3XGm5VaJwo4wv6kyRr5g=' 'sha256-jPkkWSsNSS4zUfje+AgjDzKmqYn5Oy4DmgwIFvvvcNQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-Cbb5GZSJ0wdZkvo9Sy0iUduCKunHLmulok78L19yLGQ=' 'sha256-jPkkWSsNSS4zUfje+AgjDzKmqYn5Oy4DmgwIFvvvcNQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://www.googleapis.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>RZ Ballast Archive</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -246,6 +246,13 @@ button.act.dfill{background:#dc3f3f;color:#fff;border:0}
     <div class="muted" id="datamsg" style="margin-top:8px"></div>
     <div id="bakwarn" style="margin-top:8px;color:#dc3f3f;font-weight:600;font-size:14px;display:none">⚠ Modifiche non salvate in un backup</div>
   </div>
+  <div class="card"><h2>Google Drive <button class="q" data-h="m_drive">?</button></h2>
+    <div class="muted">I modelli si allineano con la cartella «RZ Dati» del tuo Google Drive, insieme alle altre app RZ.</div>
+    <div id="drvst" style="margin:8px 0;font-weight:600">Non collegato</div>
+    <button class="act pri" id="drvcon">☁ Collega Google Drive</button>
+    <button class="act pri" id="drvsync" style="display:none">⟳ Sincronizza ora</button>
+    <button class="act" id="drvoff" style="display:none">Scollega</button>
+  </div>
   <!-- in fondo e staccato dal resto, per non toccarlo per sbaglio -->
   <div class="card" style="margin-top:56px"><h2 style="color:#dc3f3f">Ripristino</h2>
     <div class="muted">Cancella tutti i modelli e riporta l'app come appena installata. Chiede due conferme.</div>
@@ -338,6 +345,9 @@ fr:{
 "1/3 · tocca il bordo d'attacco dell'ala sull'asse della fusoliera (attaccatura)":"1/3 · touchez le bord d'attaque de l'aile sur l'axe du fuselage (emplanture)","2/3 · tocca il bordo d'uscita alla stessa radice":"2/3 · touchez le bord de fuite à la même emplanture","3/3 · tocca l'estremità della semiala destra":"3/3 · touchez l'extrémité de la demi-aile droite",'Calibrazione fatta. Controlla le linee, o ricalibra.':'Calibrage terminé. Vérifiez les lignes, ou recalibrez.',
 'Immagine troppo grande per la memoria del telefono.':"Image trop grande pour la mémoire du téléphone.",'Troppe combinazioni: riduci i pesi per ala.':'Trop de combinaisons : réduisez les masselottes par aile.','Fatto:':'Terminé :','configurazioni.':'configurations.',
 'Chiaro':'Clair','Sabbia':'Sable','Scuro':'Sombre','Nero':'Noir','▶ Ultimo modello:':'▶ Dernier modèle :','◂ Chiudi guida':'◂ Fermer le guide'}};
+/* Google Drive (v23) */
+Object.assign(DICT.en,{"I modelli si allineano con la cartella «RZ Dati» del tuo Google Drive, insieme alle altre app RZ.": "Models are kept in sync with the «RZ Dati» folder of your Google Drive, together with the other RZ apps.", "Non collegato": "Not connected", "☁ Collega Google Drive": "☁ Connect Google Drive", "⟳ Sincronizza ora": "⟳ Sync now", "Scollega": "Disconnect", "Collegato": "Connected", "ultima sincronizzazione": "last sync", "Collegamento scaduto: tocca «Sincronizza ora»": "Connection expired: tap «Sync now»", "Accesso a Google non riuscito.": "Google sign-in failed.", "Sincronizzazione…": "Syncing…", "Nessuna connessione: sincronizzerò più tardi.": "No connection: I'll sync later.", "Sincronizzazione non riuscita:": "Sync failed:", "collegamento scaduto": "connection expired"});
+Object.assign(DICT.fr,{"I modelli si allineano con la cartella «RZ Dati» del tuo Google Drive, insieme alle altre app RZ.": "Les modèles sont synchronisés avec le dossier « RZ Dati » de votre Google Drive, avec les autres apps RZ.", "Non collegato": "Non connecté", "☁ Collega Google Drive": "☁ Connecter Google Drive", "⟳ Sincronizza ora": "⟳ Synchroniser", "Scollega": "Déconnecter", "Collegato": "Connecté", "ultima sincronizzazione": "dernière synchronisation", "Collegamento scaduto: tocca «Sincronizza ora»": "Connexion expirée : touchez « Synchroniser »", "Accesso a Google non riuscito.": "Échec de la connexion à Google.", "Sincronizzazione…": "Synchronisation…", "Nessuna connessione: sincronizzerò più tardi.": "Pas de connexion : synchronisation plus tard.", "Sincronizzazione non riuscita:": "Échec de la synchronisation :", "collegamento scaduto": "connexion expirée"});
 const tr=s=>LANG==='it'?s:((DICT[LANG]||{})[s]||s);
 const HELP_EN={
  w_home:['Welcome screen',"Tap «Start» to open the menu. The first item, with the model's name, opens the model you used last. «Model archive» lists all your model sheets. «Demo model» opens a sample model to try the app. «User guide» explains everything. «Setup» opens colors, language and the configuration table. The ‹ arrow with the app logo at the top of the other pages brings you back here."],
@@ -351,6 +361,7 @@ const HELP_EN={
  s_xls:["Excel tables", "«Export tables» creates an Excel file (.xlsx) with one sheet per model: model data, slugs, formulas and every configuration with ballast, total weight, wing loading and ΔCG calculated by live formulas (change a value in the sheet and it recalculates). It opens in Excel, Numbers or Google Sheets. «Import tables» reads such a file, even after editing: for each sheet it takes data, slugs and configurations and updates the matching model (or creates a new one); image and calibration stay as in the app. To be safe, only change values and do not move rows or columns. The full backup is still in Models → Data."],
  s_guide:['Guide',"Opens the user guide or takes you back to the welcome screen where you choose the model."],
  m_list:['Model archive',"Create and manage your model sheets here. «Use» (or tapping the name) makes a model active and opens the wind page, «Edit» opens the sheet to change data, slugs, image and configurations, ⧉ duplicates, 🗑 deletes (tap twice to confirm). «+ New model» creates a new sheet."],
+ m_drive:['Google Drive',"Models are also saved in the «RZ Dati» folder of the Google Drive dedicated to your RC hobby, where RZ Hub and the other RZ apps read them too. «Connect Google Drive» opens Google sign-in (the first time Google warns that the app is not verified: Advanced → Go to RZ Apps → Allow). Then syncing is automatic when the app opens and after every change; «Sync now» forces it. The most recent version of each model always wins; a model deleted here also disappears from the other devices. Access lasts about one hour: after that, «Sync now» renews it with one tap. Without internet the app works as usual and syncs when the connection is back."],
  m_data:['Data',"Sheets are saved in this phone's browser. «Export models» creates a backup file with all models and images: on the phone the Share menu opens, so you can save it to Files (iCloud Drive, Google Drive, Dropbox) or send it. «Import from file» reads a backup: new models are added, existing ones are replaced only if the file has a newer version. After changes the app asks you to save a backup; until you do, a red warning is shown. If you clear the browser data or remove the app from the Home screen, only what you saved in a backup remains. «Reset everything» deletes all models and recreates only the factory model (Pike Precision 2): it asks twice for confirmation and offers to save a backup first."],
  e_model:['Model data',"Name, ready-to-fly weight (RTF), wing area and wing loading limit. The two tolerances (in mm) define when the CG is «balanced» (✔) or «acceptable» (~)."],
  e_slug:['Slugs (weights)',"One row per weight type: name, weight in grams, how many you have per half-wing and distance of the bay center from the CG (positive = ahead, so above the wing in the drawing; negative = behind, below). Length and thickness are only for the drawing."],
@@ -382,6 +393,7 @@ const HELP_FR={
  s_xls:["Tableaux Excel", "« Exporter les tableaux » crée un fichier Excel (.xlsx) avec une feuille par modèle : données du modèle, masselottes, formules et toutes les configurations avec lest, poids total, charge alaire et ΔCG calculés par des formules (modifiez une valeur et tout se recalcule). Il s'ouvre avec Excel, Numbers ou Google Sheets. « Importer les tableaux » lit un tel fichier, même modifié : pour chaque feuille il reprend données, masselottes et configurations et met à jour le modèle correspondant (ou en crée un) ; image et calibration restent celles de l'app. Pour éviter les erreurs, modifiez seulement les valeurs sans déplacer lignes ou colonnes. La sauvegarde complète reste dans Modèles → Données."],
  s_guide:['Guide',"Ouvre le guide d'utilisation ou vous ramène à l'écran d'accueil pour choisir le modèle."],
  m_list:['Archive des modèles',"Créez et gérez ici vos fiches de modèles. « Utiliser » (ou toucher le nom) rend un modèle actif et ouvre la page du vent, « Modifier » ouvre la fiche pour changer données, masselottes, image et configurations, ⧉ duplique, 🗑 supprime (touchez deux fois pour confirmer). « + Nouveau modèle » crée une nouvelle fiche."],
+ m_drive:['Google Drive',"Les modèles sont aussi enregistrés dans le dossier « RZ Dati » du Google Drive dédié au modélisme, où RZ Hub et les autres apps RZ les lisent aussi. « Connecter Google Drive » ouvre la connexion Google (la première fois Google prévient que l'app n'est pas vérifiée : Paramètres avancés → Accéder à RZ Apps → Autoriser). Ensuite la synchronisation est automatique à l'ouverture et après chaque modification ; « Synchroniser » la force. La version la plus récente de chaque modèle l'emporte toujours ; un modèle supprimé ici disparaît aussi des autres appareils. L'accès dure environ une heure : ensuite « Synchroniser » le renouvelle d'un geste. Sans internet l'app fonctionne comme d'habitude et se synchronise au retour de la connexion."],
  m_data:['Données',"Les fiches sont enregistrées dans le navigateur de ce téléphone. « Exporter les modèles » crée un fichier de sauvegarde avec tous les modèles et les images : sur le téléphone le menu Partager s'ouvre, pour l'enregistrer dans Fichiers (iCloud Drive, Google Drive, Dropbox) ou l'envoyer. « Importer depuis un fichier » lit une sauvegarde : les nouveaux modèles sont ajoutés, ceux déjà présents ne sont remplacés que si le fichier en contient une version plus récente. Après des modifications, l'app vous propose d'enregistrer une sauvegarde ; tant que ce n'est pas fait, un avertissement rouge s'affiche. Si vous effacez les données du navigateur ou retirez l'app de l'écran d'accueil, il ne reste que ce que vous avez sauvegardé. « Tout réinitialiser » supprime tous les modèles et recrée seulement le modèle d'usine (Pike Precision 2) : il demande deux confirmations et propose d'abord d'enregistrer une sauvegarde."],
  e_model:['Données du modèle',"Nom, poids prêt à voler (RTF), surface alaire et limite de charge alaire. Les deux tolérances (en mm) définissent quand le CG est « équilibré » (✔) ou « acceptable » (~)."],
  e_slug:['Masselottes (poids)',"Une ligne par type de poids : nom, poids en grammes, nombre par demi-aile et distance du centre du logement au CG (positive = devant, donc au-dessus de l'aile sur le dessin ; négative = derrière, en dessous). Longueur et épaisseur ne servent qu'au dessin."],
@@ -467,7 +479,8 @@ let SNAP={};
 const resnap=()=>{SNAP={};DB.models.forEach(m=>{SNAP[m.id]=snap(m)})};
 function save(){const now=Date.now();
   DB.schema=SCHEMA;
-  DB.models.forEach(m=>{const s=snap(m);if(SNAP[m.id]!==s){m.updatedAt=now;SNAP[m.id]=s}});
+  let ch=false;DB.models.forEach(m=>{const s=snap(m);if(SNAP[m.id]!==s){m.updatedAt=now;SNAP[m.id]=s;ch=true}});
+  if(ch&&typeof gdSoon==='function')gdSoon();
   try{localStorage.setItem('ballastDB',JSON.stringify(DB));return true}catch(e){return false}}
 /* stato del backup: firma (id+updatedAt) dell'ultimo export riuscito, in DB.bak */
 const bakSig=()=>DB.models.map(m=>m.id+':'+(m.updatedAt||0)).sort().join('|');
@@ -675,7 +688,7 @@ $('mlist').onclick=e=>{const nm=e.target.closest('.nm[data-sel]');if(nm&&!e.targ
   if(a==='use'){useModel(id)}
   else if(a==='edit'){openEdit(id)}
   else if(a==='dup'){const c=JSON.parse(JSON.stringify(m));c.id='m'+Date.now();c.name=tr(m.name)+' '+tr('(copia)');c.geo.livery=false;delete c.demo;DB.models.push(c);save();renderList()}
-  else if(a==='del'){if(pending===id){DB.models=DB.models.filter(x=>x.id!==id);if(DB.active===id)DB.active=DB.models[0].id;pending=null;save();buildPlan();render();renderList();askBackup()}else{pending=id;setTimeout(()=>{pending=null;renderList()},3000)}renderList()}};
+  else if(a==='del'){if(pending===id){DB.models=DB.models.filter(x=>x.id!==id);(DB.deleted=DB.deleted||{})[id]=Date.now();if(typeof gdSoon==='function')gdSoon();if(DB.active===id)DB.active=DB.models[0].id;pending=null;save();buildPlan();render();renderList();askBackup()}else{pending=id;setTimeout(()=>{pending=null;renderList()},3000)}renderList()}};
 $('newm').onclick=()=>{const m=blank();DB.models.push(m);save();openEdit(m.id,true)};
 /* finestra di conferma: btns = [{t:testo, c:classi, f:azione}] */
 function confirmBox(title,body,btns,info){$('cf_t').textContent=title;$('cf_t').style.color=info?'var(--acc)':'';$('cf_b').textContent=body;
@@ -726,6 +739,7 @@ function cleanModel(x){
   const m={id,name:str(x.name,'Modello'),rtf:Math.max(1,num(x.rtf,1000)),area:Math.max(.01,num(x.area,30)),lim:num(x.lim,75),t1:Math.max(0,num(x.t1,.5)),t2:Math.max(0,num(x.t2,1.5)),
     types,cfg:[],wind:[],onlybal:!!x.onlybal,geo,updatedAt:Math.max(0,num(x.updatedAt,0))};
   if(x.demo)m.demo=true;
+  if(Array.isArray(x.alias)){const a=x.alias.filter(v=>typeof v==='string'&&v.trim()).map(v=>v.trim().slice(0,40)).slice(0,20);if(a.length)m.alias=a}  /* nomi del modello nella radio (RZ Dati) */
   const K=types.length;
   const okCfg=Array.isArray(x.cfg)&&x.cfg.length<=500&&x.cfg.every(c=>Array.isArray(c)&&c.length===K&&c.every((v,k)=>Number.isInteger(v)&&v>=0&&v<=types[k].n));
   if(okCfg&&x.cfg.length)m.cfg=x.cfg.map(c=>c.slice());else if(!regen(m))return null;
@@ -751,6 +765,120 @@ function importData(txt){
   dmsg(tr('Importazione:')+' '+parts.join(' · '),false);
   buildPlan();render();renderList()}
 $('expbtn').onclick=exportData;
+/* ---------- Google Drive: cartella «RZ Dati» condivisa dalle app RZ (formato: rz-hub/docs/rz-dati-formato.md) ----------
+   Accesso OAuth senza librerie esterne (la CSP non le ammette): redirect a Google, il token torna nell'indirizzo (#access_token)
+   e vale circa un'ora. modelli.json senza immagini (schema 2); le foto in immagini/<id>.<ext>; vince updatedAt più alto;
+   i modelli eliminati restano come traccia {id,deleted:true,updatedAt}. */
+const GD={cid:'903204161294-4qaf9ckt8vn7c2prp5a25idkfl02ut9c.apps.googleusercontent.com',scope:'https://www.googleapis.com/auth/drive',
+  api:'https://www.googleapis.com',dir:'RZ Dati',file:'modelli.json',idir:'immagini'};
+let gd={};try{gd=JSON.parse(localStorage.getItem('rzDrive')||'{}')||{}}catch(e){gd={}}
+const gdSave=()=>{try{localStorage.setItem('rzDrive',JSON.stringify(gd))}catch(e){}};
+const gdOk=()=>!!gd.tok&&gd.exp>Date.now()+60000;
+const gdRedirect=()=>location.origin+location.pathname.replace(/index\.html$/,'');
+function gdConnect(){gd.state=Math.random().toString(36).slice(2)+Date.now().toString(36);gdSave();
+  location.href='https://accounts.google.com/o/oauth2/v2/auth?'+new URLSearchParams({client_id:GD.cid,redirect_uri:gdRedirect(),
+    response_type:'token',scope:GD.scope,include_granted_scopes:'true',state:gd.state}).toString()}
+/* ritorno da Google: #access_token=...&expires_in=...&state=...  (oppure #error=...) */
+let gdBack=false;
+(()=>{const h=location.hash;if(!/(^|[#&])(access_token|error)=/.test(h))return;
+  const p=new URLSearchParams(h.slice(1));history.replaceState(null,'',location.pathname+location.search);
+  const ok=gd.state&&p.get('state')===gd.state;delete gd.state;
+  if(ok&&p.get('access_token')){gd.tok=p.get('access_token');gd.exp=Date.now()+(+p.get('expires_in')||3600)*1000;gd.on=1;gd.err=null;gdBack=true}
+  else gd.err='auth';
+  gdSave()})();
+async function gdF(url,opt){opt=opt||{};
+  const r=await fetch(GD.api+url,Object.assign({},opt,{headers:Object.assign({Authorization:'Bearer '+gd.tok},opt.headers||{})}));
+  if(r.status===401){gd.tok=null;gdSave();throw new Error('auth')}
+  if(!r.ok)throw new Error('HTTP '+r.status);return r}
+const gdQ=s=>s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+async function gdFind(name,parent,folder){
+  const q=`name='${gdQ(name)}' and '${parent}' in parents and trashed=false`+(folder?" and mimeType='application/vnd.google-apps.folder'":'');
+  const r=await gdF('/drive/v3/files?q='+encodeURIComponent(q)+'&fields=files(id,name)&spaces=drive&pageSize=10&orderBy=createdTime');
+  return ((await r.json()).files||[])[0]||null}
+async function gdFolder(name,parent){const f=await gdFind(name,parent,true);if(f)return f.id;
+  const r=await gdF('/drive/v3/files?fields=id',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[parent]})});return (await r.json()).id}
+/* crea il file nella cartella o ne sostituisce il contenuto */
+async function gdPut(id,name,parent,blob){
+  if(id){await gdF('/upload/drive/v3/files/'+id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':blob.type},body:blob});return id}
+  const b='rzb'+Date.now().toString(36);
+  const body=new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name,parents:[parent]})}\r\n--${b}\r\nContent-Type: ${blob.type}\r\n\r\n`,blob,`\r\n--${b}--`]);
+  const r=await gdF('/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
+  return (await r.json()).id}
+const hashStr=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)+'-'+s.length.toString(36)};
+const imgExt=u=>{const t=u.slice(5,u.indexOf(';'));return t==='image/jpeg'?'jpg':t.split('/')[1]};
+const d2b=u=>{const i=u.indexOf(','),t=u.slice(5,u.indexOf(';')),bs=atob(u.slice(i+1)),a=new Uint8Array(bs.length);for(let k=0;k<bs.length;k++)a[k]=bs.charCodeAt(k);return new Blob([a],{type:t})};
+const b2d=bl=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=ko;r.readAsDataURL(bl)});
+const IMGT={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif'};
+/* modello come va scritto in modelli.json: senza l'immagine (sta in immagini/) */
+function gdOut(m){const c=JSON.parse(JSON.stringify(m));const u=m.geo.img;c.geo.img=null;
+  if(u==='@pp2')c.img='@pp2';else if(u){c.img=GD.idir+'/'+m.id+'.'+imgExt(u);c.imgHash=hashStr(u)}return c}
+let gdP=null,gdTimer=null;
+function gdSoon(){if(!gd.on)return;clearTimeout(gdTimer);gdTimer=setTimeout(()=>gdSync(false),4000)}
+/* una sola sincronizzazione alla volta: se ne arriva un'altra, parte subito dopo quella in corso */
+async function gdSync(manual){
+  while(gdP)await gdP.catch(()=>{});
+  gdP=gdRun(manual);try{return await gdP}finally{gdP=null}}
+async function gdRun(manual){
+  if(!gdOk()){if(manual)gdConnect();else gdShow();return}
+  if(navigator.onLine===false){gdShow(tr('Nessuna connessione: sincronizzerò più tardi.'));return}
+  gdShow(tr('Sincronizzazione…'));
+  try{
+    if(!gd.dir)gd.dir=await gdFolder(GD.dir,'root');
+    if(!gd.idir)gd.idir=await gdFolder(GD.idir,gd.dir);gdSave();
+    const f=await gdFind(GD.file,gd.dir);
+    let remote={};if(f){try{remote=await (await gdF('/drive/v3/files/'+f.id+'?alt=media')).json()}catch(e){if(e.message==='auth')throw e;remote={}}}
+    const rlist=Array.isArray(remote.models)?remote.models:[],rmap={};
+    const dels=Object.assign({},DB.deleted||{});
+    rlist.forEach(r=>{if(!r||typeof r.id!=='string')return;rmap[r.id]=r;if(r.deleted&&(+r.updatedAt||0)>(dels[r.id]||0))dels[r.id]=+r.updatedAt||0});
+    let changed=false;
+    /* 1. modelli del Drive più recenti o nuovi */
+    for(const r of rlist){if(!r||r.deleted)continue;const m=cleanModel(r);if(!m)continue;
+      if((dels[m.id]||0)>=m.updatedAt&&dels[m.id])continue;
+      const i=DB.models.findIndex(x=>x.id===m.id),loc=i>=0?DB.models[i]:null;
+      if(loc&&(loc.updatedAt||0)>=m.updatedAt)continue;
+      if(r.img==='@pp2')m.geo.img='@pp2';
+      else if(typeof r.img==='string'&&r.imgHash){
+        if(loc&&loc.geo.img&&loc.geo.img!=='@pp2'&&hashStr(loc.geo.img)===r.imgHash)m.geo.img=loc.geo.img;
+        else{const nm=r.img.split('/').pop(),fi=await gdFind(nm,gd.idir);
+          if(fi){const ext=(nm.split('.').pop()||'').toLowerCase(),buf=await (await gdF('/drive/v3/files/'+fi.id+'?alt=media')).arrayBuffer();
+            const u=await b2d(new Blob([buf],{type:IMGT[ext]||'image/jpeg'}));if(/^data:image\/(jpeg|png|webp|gif);base64,/.test(u))m.geo.img=u}}}
+      if(i>=0)DB.models[i]=m;else DB.models.push(m);
+      SNAP[m.id]=snap(m);changed=true}
+    /* 2. modelli eliminati (qui o su un altro dispositivo); ne resta sempre almeno uno */
+    const keep=DB.models.filter(m=>!(dels[m.id]&&dels[m.id]>=(m.updatedAt||0)));
+    if(keep.length!==DB.models.length){DB.models=keep.length?keep:[Object.assign(PP2(),{updatedAt:0})];changed=true;resnap()}
+    if(!DB.models.some(m=>m.id===DB.active))DB.active=DB.models[0].id;
+    DB.deleted=dels;
+    /* 3. immagini cambiate su questo telefono */
+    for(const m of DB.models){const u=m.geo.img;if(!u||u==='@pp2')continue;const h=hashStr(u),r=rmap[m.id];
+      if(r&&!r.deleted&&r.imgHash===h)continue;
+      if(r&&!r.deleted&&(+r.updatedAt||0)>(m.updatedAt||0))continue;
+      const nm=m.id+'.'+imgExt(u),fi=await gdFind(nm,gd.idir);await gdPut(fi&&fi.id,nm,gd.idir,d2b(u))}
+    /* 4. modelli.json aggiornato (solo se cambia qualcosa) */
+    const live={};DB.models.forEach(m=>live[m.id]=1);
+    const out=DB.models.map(gdOut);
+    Object.keys(dels).forEach(id=>{if(!live[id])out.push({id,deleted:true,updatedAt:dels[id]})});
+    const key=a=>JSON.stringify(a.slice().sort((x,y)=>x.id<y.id?-1:x.id>y.id?1:0));
+    if(key(out)!==key(rlist)){const txt=JSON.stringify({app:'rz-dati',schema:2,updatedAt:Date.now(),models:out},null,1);
+      await gdPut(f&&f.id,GD.file,gd.dir,new Blob([txt],{type:'application/json'}))}
+    gd.last=Date.now();gd.err=null;gdSave();
+    DB.bak=bakSig();save();
+    if(changed){buildPlan();render();renderList()}else renderBak();
+    gdShow()}
+  catch(e){gd.err=e.message==='auth'?'auth':'net';gdSave();
+    if(e.message==='auth'&&manual)gdConnect();else gdShow(tr('Sincronizzazione non riuscita:')+' '+(e.message==='auth'?tr('collegamento scaduto'):e.message))}}
+function gdShow(t){const st=$('drvst');if(!st)return;
+  const p=n=>String(n).padStart(2,'0'),d=gd.last?new Date(gd.last):null;
+  const last=d?' · '+tr('ultima sincronizzazione')+' '+p(d.getDate())+'/'+p(d.getMonth()+1)+' '+p(d.getHours())+':'+p(d.getMinutes()):'';
+  st.textContent=t||(gdOk()?tr('Collegato')+last:gd.on?tr('Collegamento scaduto: tocca «Sincronizza ora»')+last:gd.err==='auth'?tr('Accesso a Google non riuscito.'):tr('Non collegato'));
+  st.style.color=t&&/non riuscita/.test(t)||(!t&&gd.err==='auth'&&!gd.on)?'#dc3f3f':'';
+  $('drvcon').style.display=gd.on?'none':'';$('drvsync').style.display=gd.on?'':'none';$('drvoff').style.display=gd.on?'':'none'}
+$('drvcon').onclick=gdConnect;
+$('drvsync').onclick=()=>gdSync(true);
+$('drvoff').onclick=()=>{gd={};gdSave();gdShow()};
+window.addEventListener('online',()=>gdSoon());
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&gdOk())gdSoon()});
 /* ---------- esporta tabelle Excel (.xlsx): un foglio per modello, con formule vive ---------- */
 /* zip senza compressione (STORE) + SpreadsheetML minimo; valori già calcolati salvati accanto alle formule */
 const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
@@ -888,7 +1016,7 @@ $('impf').onchange=e=>{const fl=e.target.files&&e.target.files[0];e.target.value
 /* ---------- richiesta di backup dopo le modifiche ---------- */
 function renderBak(){$('bakwarn').style.display=needBackup()?'block':'none'}
 let afterAsk=null;
-function askBackup(then){if(!needBackup()){then&&then();return}afterAsk=then||null;$('savem').classList.add('on')}
+function askBackup(then){if(!needBackup()||gdOk()){then&&then();return}   /* con Google Drive collegato il backup lo fa la sincronizzazione */afterAsk=then||null;$('savem').classList.add('on')}
 const closeAsk=()=>{$('savem').classList.remove('on');const f=afterAsk;afterAsk=null;f&&f()};
 $('sv_yes').onclick=()=>{exportData();closeAsk()};
 $('sv_no').onclick=closeAsk;
@@ -1024,6 +1152,7 @@ const HELP_IT={
  s_xls:["Tabelle Excel", "«Esporta tabelle» crea un file Excel (.xlsx) con un foglio per ogni modello: dati del modello, pesi, formule e tutte le configurazioni con ballast, peso totale, carico alare e ΔCdG calcolati da formule vive (se cambi un valore nel foglio, si ricalcola). Si apre con Excel, Numbers o Fogli Google. «Importa tabelle» legge un file così, anche modificato: per ogni foglio prende dati, pesi e configurazioni e aggiorna il modello corrispondente (o ne crea uno nuovo); immagine e calibrazione restano quelle dell'app. Per non sbagliare, modifica solo i valori e non spostare righe o colonne. Il backup completo resta in Modelli → Dati."],
  s_guide:['Guida',"Apre la guida all'uso o ti riporta alla schermata iniziale con la scelta del modello."],
  m_list:['Archivio modelli',"Qui crei e gestisci le schede dei modelli. «Usa» (o un tocco sul nome) imposta il modello attivo e apre la pagina del vento, «Modifica» apre la scheda per cambiare dati, pesi, immagine e configurazioni, ⧉ duplica, 🗑 elimina (tocca due volte per confermare). «+ Nuovo modello» crea una scheda nuova."],
+ m_drive:['Google Drive',"I modelli vengono salvati anche nella cartella «RZ Dati» del Google Drive dedicato al modellismo, dove li leggono anche RZ Hub e le altre app RZ. «Collega Google Drive» apre l'accesso di Google (la prima volta Google avvisa che l'app non è verificata: Avanzate → Vai a RZ Apps → Consenti). Poi la sincronizzazione è automatica all'apertura e dopo ogni modifica; «Sincronizza ora» la forza. Vince sempre la versione più recente di ogni modello; un modello eliminato qui sparisce anche dagli altri dispositivi. L'accesso dura circa un'ora: dopo, «Sincronizza ora» lo rinnova con un tocco. Senza internet l'app funziona come sempre e si allinea quando torna la connessione."],
  m_data:['Dati',"Le schede sono salvate nel browser di questo telefono. «Esporta modelli» crea un file di backup con tutti i modelli e le immagini: sul telefono si apre il menu Condividi, da cui puoi salvarlo in File (iCloud Drive, Google Drive, Dropbox) o inviarlo. «Importa da file» legge un backup: i modelli nuovi vengono aggiunti, quelli già presenti vengono sostituiti solo se nel file sono più recenti. Dopo le modifiche l'app ti chiede di salvare un backup; finché non lo fai compare un avviso rosso. Se cancelli i dati del browser o togli l'app dalla Home, resta solo ciò che hai salvato in un backup. «Ripristina tutto» cancella tutti i modelli e ricrea solo il modello di fabbrica (Pike Precision 2): chiede due conferme e propone prima di salvare un backup."],
  e_model:['Dati del modello',"Nome, peso del modello pronto al volo (RTF), superficie alare e limite di carico alare. Le due tolleranze (in mm) definiscono quando il baricentro è «bilanciato» (✔) o «accettabile» (~)."],
  e_slug:['Pesi (zavorra)',"Una riga per ogni tipo di peso: nome, peso in grammi, quanti ne hai per semiala e distanza del centro del vano dal CdG (positiva = davanti, quindi sopra l'ala nel disegno; negativa = dietro, sotto). Lunghezza e spessore servono solo al disegno."],
@@ -1098,9 +1227,10 @@ document.addEventListener('touchend',e=>{if(!sw0)return;const t=e.changedTouches
 function setLang(l){LANG=l;try{localStorage.setItem('ballastLang',l)}catch(e){}
   document.documentElement.lang=l;applyStatic();buildGuide();
   document.querySelectorAll('.langs button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
-  applyTheme();render();renderList();if($('p5').classList.contains('on'))renderEdit();welcome();$('helpm').classList.remove('on')}
+  applyTheme();render();renderList();if($('p5').classList.contains('on'))renderEdit();welcome();$('helpm').classList.remove('on');gdShow()}
 document.querySelectorAll('.langs button').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 collectStatic();setLang(LANG);
+gdShow();if(gdBack||gdOk())gdSync(false);
 </script>
 <script>
 /* service worker + avviso «Nuova versione disponibile» */
